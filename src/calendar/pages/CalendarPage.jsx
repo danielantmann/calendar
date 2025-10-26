@@ -4,22 +4,12 @@ import { addHours } from "date-fns";
 import { useState } from "react";
 import { CalendarEvent, CalendarModal, Navbar } from "../";
 import { localizer, getMessagesES } from "../../helpers";
-
-const events = [
-  {
-    title: "cumple",
-    notes: "comprar regale",
-    start: new Date(),
-    end: addHours(new Date(), 2),
-    bgColor: "#fafafa",
-    user: {
-      _id: "123",
-      name: "nora",
-    },
-  },
-];
+import { useUiStore } from "../../hooks";
+import { useCalendarStore } from "../../hooks/useCalendarStore";
 
 export const CalendarPage = () => {
+  const { openDateModal } = useUiStore();
+  const { events, setActiveEvent } = useCalendarStore();
   const [view, setView] = useState(localStorage.getItem("lastView") || "week");
 
   const eventStyleGetter = (event, start, end, isSelected) => {
@@ -36,11 +26,11 @@ export const CalendarPage = () => {
   };
 
   const onDoubleClick = (event) => {
-    console.log({ onDoubleClick: event });
+    openDateModal();
   };
 
   const onSelect = (event) => {
-    console.log({ click: event });
+    setActiveEvent(event);
   };
 
   const onViewChange = (event) => {
