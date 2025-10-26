@@ -38,3 +38,16 @@
   outline: none;
   padding: 10px;
 }
+
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
