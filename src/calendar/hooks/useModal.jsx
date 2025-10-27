@@ -6,7 +6,7 @@ import { useCalendarStore } from "../../hooks/useCalendarStore";
 
 export const useModal = () => {
   const { closeDateModal } = useUiStore();
-  const { activeEvent } = useCalendarStore();
+  const { activeEvent, startSavingEvent } = useCalendarStore();
 
   const [formValues, setFormValues] = useState({
     title: "Daniel",
@@ -43,7 +43,7 @@ export const useModal = () => {
     });
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     setFormSubmited(true);
     const difference = differenceInSeconds(formValues.end, formValues.start);
@@ -72,6 +72,9 @@ export const useModal = () => {
     console.log("Formulario válido:", formValues);
 
     //TODO:
+    await startSavingEvent(formValues);
+    closeDateModal();
+    setFormSubmited(false);
     //cerrar modal, remover errores en pantalla y cerrar modal
   };
 
