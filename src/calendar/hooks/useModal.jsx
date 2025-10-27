@@ -6,7 +6,8 @@ import { useCalendarStore } from "../../hooks/useCalendarStore";
 
 export const useModal = () => {
   const { closeDateModal } = useUiStore();
-  const { activeEvent, startSavingEvent } = useCalendarStore();
+  const { activeEvent, startSavingEvent, startDeletingEvent } =
+    useCalendarStore();
 
   const [formValues, setFormValues] = useState({
     title: "Daniel",
@@ -83,6 +84,11 @@ export const useModal = () => {
     closeDateModal();
   };
 
+  const onDeleteEvent = () => {
+    startDeletingEvent();
+    closeDateModal();
+  };
+
   return {
     formValues,
     onInputChange,
@@ -91,5 +97,6 @@ export const useModal = () => {
     titleClass,
     isOpen,
     onCloseModal,
+    onDeleteEvent,
   };
 };
