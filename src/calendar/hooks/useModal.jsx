@@ -1,8 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { addHours, differenceInSeconds } from "date-fns";
 import Swal from "sweetalert2";
+import { useUiStore } from "../../hooks";
+import { useCalendarStore } from "../../hooks/useCalendarStore";
 
 export const useModal = () => {
+  const { closeDateModal } = useUiStore();
+  const { activeEvent, startSavingEvent, startDeletingEvent } =
+    useCalendarStore();
+
   const [formValues, setFormValues] = useState({
     title: "Daniel",
     notes: "Herrera",
@@ -21,6 +27,12 @@ export const useModal = () => {
     return formValues.title.length > 0 ? "" : "is-invalid";
   }, [formValues.title, formSubmited]);
 
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({ ...activeEvent });
+    }
+  }, [activeEvent]);
+
   const onDateChange = (event, changing) => {
     setFormValues({ ...formValues, [changing]: event });
   };
@@ -32,7 +44,7 @@ export const useModal = () => {
     });
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     setFormSubmited(true);
     const difference = differenceInSeconds(formValues.end, formValues.start);
@@ -61,10 +73,21 @@ export const useModal = () => {
     console.log("Formulario válido:", formValues);
 
     //TODO:
+    await startSavingEvent(formValues);
+    closeDateModal();
+    setFormSubmited(false);
     //cerrar modal, remover errores en pantalla y cerrar modal
   };
 
-  const onCloseModal = () => setIsOpen(false);
+  const onCloseModal = () => {
+    setIsOpen(false);
+    closeDateModal();
+  };
+
+  const onDeleteEvent = () => {
+    startDeletingEvent();
+    closeDateModal();
+  };
 
   return {
     formValues,
@@ -74,5 +97,6 @@ export const useModal = () => {
     titleClass,
     isOpen,
     onCloseModal,
+    onDeleteEvent,
   };
 };

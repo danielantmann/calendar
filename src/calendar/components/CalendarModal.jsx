@@ -1,12 +1,10 @@
-import { addHours, differenceInSeconds } from "date-fns";
-import { useMemo, useState } from "react";
 import Modal from "react-modal";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from "date-fns/locale/es";
-import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { useModal } from "../hooks/useModal";
+import { useUiStore } from "../../hooks";
 
 registerLocale("es", es);
 
@@ -32,11 +30,13 @@ export const CalendarModal = () => {
     titleClass,
     isOpen,
     onCloseModal,
+    onDeleteEvent,
   } = useModal();
 
+  const { isDateModalOpen, closeDateModal } = useUiStore();
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={isDateModalOpen}
       onRequestClose={onCloseModal}
       style={customStyles}
       className="modal"
@@ -110,6 +110,14 @@ export const CalendarModal = () => {
         <button type="submit" className="btn btn-outline-primary btn-block">
           <i className="far fa-save"></i>
           <span> Guardar</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline-danger btn-block"
+          onClick={onDeleteEvent}
+        >
+          <i className="fas fa-trash"></i>
+          <span> Borrar</span>
         </button>
       </form>
     </Modal>
