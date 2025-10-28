@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { calendarApi } from "../api";
 import { clearErrorMessage, onLogin, onLogout } from "../store";
-import { AxiosError } from "axios";
 
 export const useAuthStore = () => {
   const dispatch = useDispatch();
@@ -49,6 +48,21 @@ export const useAuthStore = () => {
     }
   };
 
+  const checkAuthToken = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return dispatch(onLogout("Token expired"));
+
+    try {
+      const { data } = await calendarApi.get("/auth/renew");
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("token-init-date", new Date().getTime());
+      dispatch(onLogin({ name: data.name, uid: data.uid }));
+    } catch (error) {
+      localStorage.clear();
+      dispatch(onLogout());
+    }
+  };
+
   return {
     status,
     user,
@@ -56,5 +70,6 @@ export const useAuthStore = () => {
 
     startLogin,
     startRegister,
+    checkAuthToken,
   };
 };
