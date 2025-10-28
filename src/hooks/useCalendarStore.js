@@ -2,11 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   onAddNewEvent,
   onDeleteEvent,
+  onLoadEvents,
   onSetActiveEvent,
   onUpdateEvent,
 } from "../store";
 import { calendarApi } from "../api";
-import { useAuthStore } from "./useAuthStore";
 import { convertEventsToDateEvents } from "../helpers";
 
 export const useCalendarStore = () => {
@@ -40,6 +40,7 @@ export const useCalendarStore = () => {
     try {
       const { data } = await calendarApi.get("/events");
       const events = convertEventsToDateEvents(data.events);
+      dispatch(onLoadEvents(events));
     } catch (error) {
       console.log(error);
     }
