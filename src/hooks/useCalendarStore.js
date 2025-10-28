@@ -7,6 +7,7 @@ import {
 } from "../store";
 import { calendarApi } from "../api";
 import { useAuthStore } from "./useAuthStore";
+import { convertEventsToDateEvents } from "../helpers";
 
 export const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -19,18 +20,29 @@ export const useCalendarStore = () => {
   };
 
   const startSavingEvent = async (calendarEvent) => {
-    //TODO: conectar con el backend
-
     if (calendarEvent._id) {
       dispatch(onUpdateEvent({ ...calendarEvent }));
     } else {
-      const { data } = await calendarApi.post("/events", calendarEvent);
-      dispatch(onAddNewEvent({ ...calendarEvent, id: data.event.id, user }));
+      try {
+        const { data } = await calendarApi.post("/events", calendarEvent);
+        dispatch(onAddNewEvent({ ...calendarEvent, id: data.event.id, user }));
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   const startDeletingEvent = () => {
     dispatch(onDeleteEvent());
+  };
+
+  const startLoadingEvents = async () => {
+    try {
+      const { data } = await calendarApi.get("/events");
+      const events = convertEventsToDateEvents(data.events);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return {
     events,
@@ -40,5 +52,6 @@ export const useCalendarStore = () => {
     setActiveEvent,
     startSavingEvent,
     startDeletingEvent,
+    startLoadingEvents,
   };
 };
