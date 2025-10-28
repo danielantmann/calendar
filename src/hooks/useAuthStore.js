@@ -50,7 +50,7 @@ export const useAuthStore = () => {
 
   const checkAuthToken = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return dispatch(onLogout("Token expired"));
+    if (!token) return dispatch(onLogout());
 
     try {
       const { data } = await calendarApi.get("/auth/renew");
@@ -63,6 +63,10 @@ export const useAuthStore = () => {
     }
   };
 
+  const startLogout = () => {
+    localStorage.clear();
+    dispatch(onLogout());
+  };
   return {
     status,
     user,
@@ -71,5 +75,6 @@ export const useAuthStore = () => {
     startLogin,
     startRegister,
     checkAuthToken,
+    startLogout,
   };
 };
