@@ -8,7 +8,7 @@ import {
 } from "../store";
 import { calendarApi } from "../api";
 import { convertEventsToDateEvents } from "../helpers";
-import { CalendarEvent } from "../calendar";
+
 import Swal from "sweetalert2";
 
 export const useCalendarStore = () => {
@@ -29,7 +29,6 @@ export const useCalendarStore = () => {
 
         return;
       }
-
       const { data } = await calendarApi.post("/events", calendarEvent);
       dispatch(onAddNewEvent({ ...calendarEvent, id: data.event.id, user }));
     } catch (error) {
@@ -37,8 +36,14 @@ export const useCalendarStore = () => {
     }
   };
 
-  const startDeletingEvent = () => {
-    dispatch(onDeleteEvent());
+  const startDeletingEvent = async () => {
+    try {
+      await calendarApi.delete(`/events/${activeEvent.id}`);
+
+      dispatch(onDeleteEvent());
+    } catch (error) {
+      Swal.fire("Error al eliminar", error.response.data?.msg, "error");
+    }
   };
 
   const startLoadingEvents = async () => {
